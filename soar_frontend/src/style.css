@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-kibana-bg text-kibana-text font-sans antialiased;
+}
+
+.dark body,
+body.dark-mode {
+  @apply bg-kibana-dark_bg text-gray-200;
+}

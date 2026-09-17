@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./soar_backend
+      dockerfile: Dockerfile
+    container_name: astra-soar-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - DEMO_MODE=${DEMO_MODE:-True}
+      - DB_PATH=/app/data/soar.db
+      - KIBANA_URL=${KIBANA_URL:-http://localhost:5601}
+    volumes:
+      - backend_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - soar_network
+
+  frontend:
+    build:
+      context: ./soar_frontend
+      dockerfile: Dockerfile
+    container_name: astra-soar-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - soar_network
+
+volumes:
+  backend_data:
+    driver: local
+
+networks:
+  soar_network:
+    driver: bridge
