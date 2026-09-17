@@ -125,10 +125,8 @@ flowchart TD
   - `duration` — длительность сессии;
   - `orig_pkts`, `resp_pkts` — число отправленных/полученных пакетов;
   - `orig_bytes`, `resp_bytes` — объемы переданных/принятых данных;
-  - Производная асимметрия (`ratio_bytes`):
-    $$\text{ratio}_{\text{bytes}} = \frac{\text{orig}_{\text{bytes}} + 1}{\text{resp}_{\text{bytes}} + 1}$$
-  - Средний размер пакета (`avg_pkt_size`):
-    $$\text{avg}_{\text{size}} = \frac{\text{bytes}}{\text{packets}}$$
+  - Производная асимметрия: `ratio_bytes = (orig_bytes + 1) / (resp_bytes + 1)`;
+  - Средний размер пакета: `avg_pkt_size = bytes / packets`.
 - **Параметры ансамбля:** $t = 25$ деревьев, высота $h = 15$, скользящее окно $\psi = 250$, порог аномальности $\theta = 0.85$.
 
 ---
@@ -141,11 +139,9 @@ flowchart TD
 
 - **Централизованная (монолитная) архитектура:**
   $$T_{\text{centr}}(\lambda) = t_{\text{tr}}^{\text{raw}} + \frac{1}{\mu_{\text{centr}} - \lambda} = 0.011 + \frac{1}{160 - \lambda}$$
-  *(где $t_{\text{tr}}^{\text{raw}} = 11\text{ ms}$ ($0.011$ с), пропускная способность центра $\mu_{\text{centr}} = 160\text{ events/s}$).*
 
 - **Мультиагентная распределенная архитектура:**
   $$T_{\text{MAS}}(\lambda) = t_{\text{edge}} + t_{\text{tr}}^{\text{meta}} + t_{\text{bus}} + \frac{1}{\mu_{\text{ML}} - \lambda} = 0.007 + \frac{1}{250 - \lambda}$$
-  *(где накладные расходы сенсора и шины составляют $7\text{ ms}$ ($0.007$ с), пропускная способность ML-агента $\mu_{\text{ML}} = 250\text{ events/s}$).*
 
 - **Коэффициент оперативности:**
   $$K_{\text{op}}(\lambda) = \frac{T_{\text{centr}}(\lambda)}{T_{\text{MAS}}(\lambda)}$$

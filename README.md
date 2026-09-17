@@ -134,10 +134,8 @@ Incoming Stream (Kafka) ──► Feature Extraction ──► Half-Space Trees 
   - Session duration (`duration`)
   - Transmitted & received packets (`orig_pkts`, `resp_pkts`)
   - Volume in bytes (`orig_bytes`, `resp_bytes`)
-  - Derived asymmetry ratio (`ratio_bytes`):
-    $$\text{ratio}_{\text{bytes}} = \frac{\text{orig}_{\text{bytes}} + 1}{\text{resp}_{\text{bytes}} + 1}$$
-  - Average packet size (`avg_pkt_size`):
-    $$\text{avg}_{\text{size}} = \frac{\text{bytes}}{\text{packets}}$$
+  - Derived asymmetry ratio: `ratio_bytes = (orig_bytes + 1) / (resp_bytes + 1)`
+  - Average packet size: `avg_pkt_size = bytes / packets`
 - **Hyperparameter Configuration:**
   - Number of trees: $t = 25$
   - Maximum tree height: $h = 15$
@@ -154,11 +152,9 @@ To mathematically prove the operational timeliness advantage of the multi-agent 
 
 - **Centralized Architecture Latency Model:**
   $$T_{\text{centr}}(\lambda) = t_{\text{tr}}^{\text{raw}} + \frac{1}{\mu_{\text{centr}} - \lambda} = 0.011 + \frac{1}{160 - \lambda}$$
-  *(where $t_{\text{tr}}^{\text{raw}} = 11\text{ ms}$ is raw packet transfer overhead, $\mu_{\text{centr}} = 160\text{ events/s}$ is central core processing capacity).*
 
 - **Multi-Agent Streaming Latency Model:**
   $$T_{\text{MAS}}(\lambda) = t_{\text{edge}} + t_{\text{tr}}^{\text{meta}} + t_{\text{bus}} + \frac{1}{\mu_{\text{ML}} - \lambda} = 0.007 + \frac{1}{250 - \lambda}$$
-  *(where edge preprocessing, metadata transit, and bus delay total $7\text{ ms}$, and $\mu_{\text{ML}} = 250\text{ events/s}$).*
 
 - **Operational Timeliness Coefficient:**
   $$K_{\text{op}}(\lambda) = \frac{T_{\text{centr}}(\lambda)}{T_{\text{MAS}}(\lambda)}$$
