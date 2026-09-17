@@ -38,7 +38,7 @@ This project implements a **Distributed Multi-Agent Architecture** that solves t
 1. **Edge Preprocessing & Filtering:** Eliminates information noise at the perimeter using lightweight agents (**Suricata NIDS**, **Zeek NTA**, and **Vector** in Rust). Only compact, enriched metadata is transferred across the network.
 2. **Pre-Storage In-Memory ML Detection:** Integrates an unsupervised streaming anomaly detector (**Streaming Half-Space Trees**) directly into the Kafka message broker critical path. Anomaly scoring occurs in RAM **prior** to disk persistence and Elasticsearch indexing.
 3. **Automated Incident Response (SOAR):** Provides a centralized console built on **FastAPI** (Clean/Onion Architecture) and **Vue 3** (Tailwind CSS, dark mode, i18n) for dynamic IDS rule orchestration, remote Git synchronization, automated PKI VPN certificate lifecycle management, and on-demand PCAP retrieval.
-4. **Empirically Proven Latency Reduction:** Theoretical Queuing Theory modeling ($M/M/1/\infty/FIFO$) and empirical evaluation on the benchmark **CICIDS-2017** dataset confirm an **operational speedup coefficient \(K_{op} = 2.05\)** (\(>2\times\) reduction in alert latency under high loads).
+4. **Empirically Proven Latency Reduction:** Theoretical Queuing Theory modeling ($M/M/1/\infty/\text{FIFO}$) and empirical evaluation on the benchmark **CICIDS-2017** dataset confirm an **operational speedup coefficient $K_{\text{op}} = 2.05$** (> 2× reduction in alert latency under high loads).
 
 ---
 
@@ -126,16 +126,18 @@ Incoming Stream (Kafka) ──► Feature Extraction ──► Half-Space Trees 
 ```
 
 ### Key Mathematical Characteristics
-- **Computational Complexity:** Amortized **\(O(1)\)** constant time per event observation.
+- **Computational Complexity:** Amortized **$O(1)$** constant time per event observation.
 - **Memory Footprint:** Constant bounded memory relative to stream length:
   $$\text{Memory} \sim O(t \cdot 2^h)$$
-  where \(t\) is tree count and \(h\) is max tree depth.
+  where $t$ is tree count and $h$ is max tree depth.
 - **Feature Vector ($d$-dimensional):**
   - Session duration (`duration`)
   - Transmitted & received packets (`orig_pkts`, `resp_pkts`)
   - Volume in bytes (`orig_bytes`, `resp_bytes`)
-  - Derived asymmetry ratio: $\text{ratio\_bytes} = \frac{\text{orig\_bytes} + 1}{\text{resp\_bytes} + 1}$
-  - Average packet size: $\text{avg\_pkt\_size} = \frac{\text{bytes}}{\text{packets}}$
+  - Derived asymmetry ratio (`ratio_bytes`):
+    $$\text{ratio}_{\text{bytes}} = \frac{\text{orig}_{\text{bytes}} + 1}{\text{resp}_{\text{bytes}} + 1}$$
+  - Average packet size (`avg_pkt_size`):
+    $$\text{avg}_{\text{size}} = \frac{\text{bytes}}{\text{packets}}$$
 - **Hyperparameter Configuration:**
   - Number of trees: $t = 25$
   - Maximum tree height: $h = 15$
@@ -146,24 +148,24 @@ Incoming Stream (Kafka) ──► Feature Extraction ──► Half-Space Trees 
 
 ## 📊 Queuing Theory Modeling & Evaluation
 
-To mathematically prove the operational timeliness advantage of the multi-agent streaming architecture over a centralized monolithic SIEM, analytical models based on Queuing Theory (\(M/M/1/\infty/FIFO\)) were formulated and validated.
+To mathematically prove the operational timeliness advantage of the multi-agent streaming architecture over a centralized monolithic SIEM, analytical models based on Queuing Theory ($M/M/1/\infty/\text{FIFO}$) were formulated and validated.
 
 ### 1. Mathematical Formulations
 
 - **Centralized Architecture Latency Model:**
-  $$T_{\text{centr}}(\lambda) = t_{tr}^{raw} + \frac{1}{\mu_{\text{centr}} - \lambda} = 0.011 + \frac{1}{160 - \lambda}$$
-  *(where \(t_{tr}^{raw} = 11\text{ ms}\) is raw packet transfer overhead, \(\mu_{\text{centr}} = 160\text{ events/s}\) is central core processing capacity).*
+  $$T_{\text{centr}}(\lambda) = t_{\text{tr}}^{\text{raw}} + \frac{1}{\mu_{\text{centr}} - \lambda} = 0.011 + \frac{1}{160 - \lambda}$$
+  *(where $t_{\text{tr}}^{\text{raw}} = 11\text{ ms}$ is raw packet transfer overhead, $\mu_{\text{centr}} = 160\text{ events/s}$ is central core processing capacity).*
 
 - **Multi-Agent Streaming Latency Model:**
-  $$T_{\text{MAS}}(\lambda) = t_{\text{edge}} + t_{tr}^{\text{meta}} + t_{\text{bus}} + \frac{1}{\mu_{\text{ML}} - \lambda} = 0.007 + \frac{1}{250 - \lambda}$$
-  *(where edge preprocessing, metadata transit, and bus delay total \(7\text{ ms}\), and \(\mu_{\text{ML}} = 250\text{ events/s}\)).*
+  $$T_{\text{MAS}}(\lambda) = t_{\text{edge}} + t_{\text{tr}}^{\text{meta}} + t_{\text{bus}} + \frac{1}{\mu_{\text{ML}} - \lambda} = 0.007 + \frac{1}{250 - \lambda}$$
+  *(where edge preprocessing, metadata transit, and bus delay total $7\text{ ms}$, and $\mu_{\text{ML}} = 250\text{ events/s}$).*
 
 - **Operational Timeliness Coefficient:**
   $$K_{\text{op}}(\lambda) = \frac{T_{\text{centr}}(\lambda)}{T_{\text{MAS}}(\lambda)}$$
 
 ### 2. Theoretical vs. Experimental Results
 
-| Ingress Load \(\lambda\) (events/s) | Monolithic Latency \(T_{\text{centr}}\) (ms) | Multi-Agent Latency \(T_{\text{MAS}}\) (ms) | Speedup Ratio \(K_{\text{op}}\) |
+| Ingress Load $\lambda$ (events/s) | Monolithic Latency $T_{\text{centr}}$ (ms) | Multi-Agent Latency $T_{\text{MAS}}$ (ms) | Speedup Ratio $K_{\text{op}}$ |
 |---|---|---|---|
 | 20 | 18.14 ms | 11.35 ms | **1.60x** |
 | 60 | 21.00 ms | 12.26 ms | **1.71x** |
@@ -178,7 +180,7 @@ To mathematically prove the operational timeliness advantage of the multi-agent 
   <em>Figure 2 — Processing Delay vs Event Rate: Monolithic Centralized SIEM vs Multi-Agent Architecture</em>
 </p>
 
-> **Statistical Significance:** Verified using two-sample Student's t-test on 10 independent test runs (\(t_{\text{obs}} = 4.63 > t_{\text{crit}} = 1.83, p < 0.05\)). Under peak loads, the multi-agent streaming pipeline demonstrates nearly **4x lower processing delay** while maintaining equivalent detection accuracy.
+> **Statistical Significance:** Verified using two-sample Student's t-test on 10 independent test runs ($t_{\text{obs}} = 4.63 > t_{\text{crit}} = 1.83, p < 0.05$). Under peak loads, the multi-agent streaming pipeline demonstrates nearly **4x lower processing delay** while maintaining equivalent detection accuracy.
 
 ---
 
@@ -195,7 +197,7 @@ The SOAR management plane provides a responsive, single-pane-of-glass interface 
 1. **Live Infrastructure & ML Anomaly Dashboard:**
    - Real-time engine health status and dynamic toggle controls (Start/Stop ML Agent).
    - Live stream of detected network anomalies with severity tags (Critical, High), source IP, sensor origin, and anomaly score.
-   - **One-Click Dynamic Kibana Deep-Linking:** Automatically constructs a pre-filtered Kibana Discover link centered around the exact incident timestamp (\(\pm 5\text{ minutes}\)) with Lucene/KQL query formatting (`source.ip:"x.x.x.x"`).
+   - **One-Click Dynamic Kibana Deep-Linking:** Automatically constructs a pre-filtered Kibana Discover link centered around the exact incident timestamp (±5 min) with Lucene/KQL query formatting (`source.ip:"x.x.x.x"`).
 2. **Sensors Inventory & Telemetry Monitoring:**
    - Real-time online/offline heartbeat detection based on timestamp tracking.
    - Live CPU and RAM utilization metrics per sensor node.
@@ -218,7 +220,7 @@ The SOAR management plane provides a responsive, single-pane-of-glass interface 
 
 ## 🚀 Standalone Demo Mode
 
-To allow complete exploration in public portfolios without requiring external virtual machines, Kafka clusters, or remote SSH agents, the system includes a comprehensive **Standalone Demo Mode** (`DEMO_MODE=True`).
+To allow immediate evaluation, local testing, and offline development without requiring external virtual machines, live Kafka clusters, or remote SSH agents, the system includes a comprehensive **Standalone Demo Mode** (`DEMO_MODE=True`).
 
 When `DEMO_MODE=True` (active by default in `.env.example`):
 - **Mock SSH Client:** Emulates remote command execution, telemetry retrieval, Suricata rule deployment, and synthesizes **valid binary libpcap capture files** for download.
@@ -371,7 +373,7 @@ astra_soar/
 
 Developed as an advanced engineering prototype for scalable SOC and corporate network defense operations.
 
-- **Author:** SOC Architecture & Security Engineering Portfolio ([@KrayMakso68](https://github.com/KrayMakso68))
+- **Author:** [@KrayMakso68](https://github.com/KrayMakso68) — Distributed SOC Architecture & Security Systems Engineering
 - **Key References:**
   - S.C. Tan, K.M. Ting, T.F. Liu. *Fast Anomaly Detection for Streaming Data*, IJCAI 2011.
   - L. Kleinrock. *Queueing Systems, Volume I: Theory*, 1975.
