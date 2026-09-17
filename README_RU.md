@@ -76,6 +76,12 @@ flowchart TD
     end
 ```
 
+<p align="center">
+  <img src="docs/images/architecture_diagram.png" alt="Архитектура мультиагентной системы SIEM & SOAR" width="900" />
+  <br/>
+  <em>Рисунок 1 — Топология мультиагентной системы и защищенное зонирование сетевых контуров</em>
+</p>
+
 ### Характеристика сетевых зон и правил фильтрации
 
 | Зона | Уровень доверия | Назначение | Разрешенные входящие подключения |
@@ -153,6 +159,12 @@ flowchart TD
 | **Среднее теоретическое** | **29.52 мс** | **13.24 мс** | **2.23x** |
 | **Эксперимент (CICIDS-2017)** | **25.58 мс** | **12.47 мс** | **2.05x** |
 
+<p align="center">
+  <img src="docs/images/queuing_theory_chart.png" alt="Сравнение времени реакции: монолитная vs мультиагентная архитектура" width="750" />
+  <br/>
+  <em>Рисунок 2 — Зависимость времени обработки событий от входящей нагрузки: централизованная SIEM против мультиагентной системы</em>
+</p>
+
 > **Статистическая значимость:** Подтверждена по двустороннему $t$-критерию Стьюдента для 10 повторных прогонов на эталонном трафике CICIDS-2017 (\(t_{\text{набл}} = 4.63 > t_{\text{крит}} = 1.83, p < 0.05\)). Время реакции сокращается более чем в 2 раза при сохранении 100% точности обнаружения.
 
 ---
@@ -160,6 +172,12 @@ flowchart TD
 ## 🖥 Возможности консоли оркестрации и реагирования (SOAR)
 
 Веб-приложение построено по принципу **единого окна оператора**:
+
+<p align="center">
+  <img src="docs/images/soar_dashboard.png" alt="Главная панель SOAR с потоком алертов машинного обучения" width="900" />
+  <br/>
+  <em>Рисунок 3 — Консоль управления SOAR: статус потокового ML-агента и лента сетевых аномалий</em>
+</p>
 
 1. **Главная панель и мониторинг аномалий:**
    - Отображение статуса соединения с шиной Kafka и состояния потокового ML-агента.
@@ -200,8 +218,8 @@ flowchart TD
 
 1. Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/KrayMakso68/astra_soar.git
-   cd astra_soar
+   git clone https://github.com/KrayMakso68/edge-routed-siem.git
+   cd edge-routed-siem
    ```
 
 2. Скопируйте файл конфигурации окружения:
@@ -251,18 +269,30 @@ npm run dev
 
 ## 🖼 Галерея интерфейса и скриншоты
 
-Файлы скриншотов размещаются в каталоге `docs/images/`:
+### 1. База сенсоров и мониторинг аппаратной телеметрии (CPU/RAM)
+<p align="center">
+  <img src="docs/images/sensor_inventory.png" alt="Реестр сенсоров со статусами Online и телеметрией CPU/RAM" width="850" />
+</p>
 
-| Имя файла | Содержание скриншота |
-|---|---|
-| `docs/images/architecture_diagram.png` | Трехуровневая схема архитектуры и топология контуров |
-| `docs/images/soar_dashboard.png` | Главная панель SOAR: статус ML и лента сетевых аномалий |
-| `docs/images/sensor_inventory.png` | База сенсоров с индикаторами онлайна и шкалами CPU/RAM |
-| `docs/images/suricata_rules_git.png` | Управление правилами Suricata и окно синхронизации с Git |
-| `docs/images/vpn_pki_management.png` | Таблица сертификатов OpenVPN и модальное окно генерации профиля |
-| `docs/images/pcap_traffic_capture.png` | Раздел выгрузки дампов сетевого трафика PCAP |
-| `docs/images/kibana_investigation.png` | Окно Kibana Discover, открытое по динамической ссылке алерта |
-| `docs/images/queuing_theory_chart.png` | График зависимости времени реакции от нагрузки (ТМО) |
+### 2. Управление правилами Suricata и синхронизация сигнатур с Git
+<p align="center">
+  <img src="docs/images/suricata_rules_git.png" alt="Развертывание правил Suricata и синхронизация с Git" width="850" />
+</p>
+
+### 3. Управление доверием, сертификатами и профилями OpenVPN
+<p align="center">
+  <img src="docs/images/vpn_pki_management.png" alt="Управление сертификатами OpenVPN и процедура отзыва" width="850" />
+</p>
+
+### 4. Ретроспективный анализ и выгрузка дампов трафика PCAP
+<p align="center">
+  <img src="docs/images/pcap_traffic_capture.png" alt="Список файлов дампов PCAP и выгрузка по SFTP" width="850" />
+</p>
+
+### 5. Динамический переход в Kibana Discover в контекст инцидента (±5 минут)
+<p align="center">
+  <img src="docs/images/kibana_investigation.png" alt="Расследование инцидента в Kibana Discover" width="850" />
+</p>
 
 ---
 

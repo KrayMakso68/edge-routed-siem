@@ -76,6 +76,12 @@ flowchart TD
     end
 ```
 
+<p align="center">
+  <img src="docs/images/architecture_diagram.png" alt="Multi-Agent SIEM & SOAR Architecture" width="900" />
+  <br/>
+  <em>Figure 1 — Multi-Agent System Architecture & Security Zone Segregation</em>
+</p>
+
 ### Network Zones & Security Boundaries
 
 | Zone | Trust Level | Components | Allowed Inbound Protocols |
@@ -166,6 +172,12 @@ To mathematically prove the operational timeliness advantage of the multi-agent 
 | **Theoretical Mean** | **29.52 ms** | **13.24 ms** | **2.23x** |
 | **Experimental Mean (CICIDS-2017)** | **25.58 ms** | **12.47 ms** | **2.05x** |
 
+<p align="center">
+  <img src="docs/images/queuing_theory_chart.png" alt="Queuing Theory Performance: Monolithic vs Multi-Agent" width="750" />
+  <br/>
+  <em>Figure 2 — Processing Delay vs Event Rate: Monolithic Centralized SIEM vs Multi-Agent Architecture</em>
+</p>
+
 > **Statistical Significance:** Verified using two-sample Student's t-test on 10 independent test runs (\(t_{\text{obs}} = 4.63 > t_{\text{crit}} = 1.83, p < 0.05\)). Under peak loads, the multi-agent streaming pipeline demonstrates nearly **4x lower processing delay** while maintaining equivalent detection accuracy.
 
 ---
@@ -173,6 +185,12 @@ To mathematically prove the operational timeliness advantage of the multi-agent 
 ## 🖥 SOAR Master Console Capabilities
 
 The SOAR management plane provides a responsive, single-pane-of-glass interface built with modern UX principles:
+
+<p align="center">
+  <img src="docs/images/soar_dashboard.png" alt="SOAR Dashboard with ML Anomaly Stream" width="900" />
+  <br/>
+  <em>Figure 3 — SOAR Master Console: ML Engine Status & Live Anomaly Alert Feed</em>
+</p>
 
 1. **Live Infrastructure & ML Anomaly Dashboard:**
    - Real-time engine health status and dynamic toggle controls (Start/Stop ML Agent).
@@ -220,8 +238,8 @@ When `DEMO_MODE=True` (active by default in `.env.example`):
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/KrayMakso68/astra_soar.git
-   cd astra_soar
+   git clone https://github.com/KrayMakso68/edge-routed-siem.git
+   cd edge-routed-siem
    ```
 
 2. Copy the environment configuration:
@@ -274,18 +292,30 @@ Navigate to [http://localhost:5173](http://localhost:5173).
 
 ## 🖼 Visual Assets & Screenshots
 
-Placeholders for system screenshots and schemas are structured inside `docs/images/`:
+### 1. Sensor Inventory & Live Node Telemetry
+<p align="center">
+  <img src="docs/images/sensor_inventory.png" alt="Sensors Inventory with Heartbeat Status and CPU/RAM Telemetry" width="850" />
+</p>
 
-| Path | Screenshot Content |
-|---|---|
-| `docs/images/architecture_diagram.png` | 3-Zone Architecture & Network Topology Diagram |
-| `docs/images/soar_dashboard.png` | SOAR Console Dashboard with ML anomaly stream |
-| `docs/images/sensor_inventory.png` | Sensors table with live CPU/RAM and online badges |
-| `docs/images/suricata_rules_git.png` | Suricata Rules manager & Git synchronization modal |
-| `docs/images/vpn_pki_management.png` | VPN Certificate generation & revocation table |
-| `docs/images/pcap_traffic_capture.png` | PCAP download view with file metadata |
-| `docs/images/kibana_investigation.png` | Kibana Discover view pivoted from SOAR alert |
-| `docs/images/queuing_theory_chart.png` | Queuing Theory Load vs Latency graph |
+### 2. Suricata IDS Rules Orchestration & Git Sync
+<p align="center">
+  <img src="docs/images/suricata_rules_git.png" alt="Suricata Custom Rules Deployment and Git Sync" width="850" />
+</p>
+
+### 3. OpenVPN PKI & Certificate Management
+<p align="center">
+  <img src="docs/images/vpn_pki_management.png" alt="VPN Certificate Management and Revocation" width="850" />
+</p>
+
+### 4. Remote PCAP Traffic Capture Forensics
+<p align="center">
+  <img src="docs/images/pcap_traffic_capture.png" alt="PCAP File Listing and Forensics Download" width="850" />
+</p>
+
+### 5. Dynamic Retrospective Investigation in Kibana
+<p align="center">
+  <img src="docs/images/kibana_investigation.png" alt="Kibana Discover View with ±5 min Incident Context" width="850" />
+</p>
 
 ---
 
